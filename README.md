@@ -7,4 +7,5 @@ play it here: http://checker.meteor.com/
 
 =======
 
-initials version made in 4 hours for ludum dare 26
+initial version made in 4 hours for ludum dare 26:
+http://www.ludumdare.com/compo/ludum-dare-26/?action=preview&uid=7846
