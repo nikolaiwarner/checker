@@ -1,4 +1,4 @@
-# Nikolai Warner - April 28, 2013
+# Nikolai Warner - initially dreamed and created in four hours on April 28, 2013
 
 
 class CheckerGame
@@ -15,6 +15,8 @@ class CheckerGame
     @setup_checker_events()
     @update_score()
     @show_turn_info()
+
+    setTimeout (-> $('.checker').removeClass('flip')), 5000
 
 
   draw_board: =>
@@ -44,8 +46,11 @@ class CheckerGame
 
           if player
             $checker = $('<div>')
-            $checker.addClass 'checker'
+            $checker.addClass 'checker flip'
             $checker.data 'player', player
+
+            $front = $("<div class='front'></div><div class='back'><div class='number'>#{player}</div></div>")
+            $checker.append $front
 
             $('.board').append $checker
             @place_checker $checker, x, y
@@ -105,13 +110,11 @@ class CheckerGame
       jump_y = y + 1
 
     if !@is_square_free(jump_x, jump_y)
-      console.log 'jump'
       @kill_checker(jump_x, jump_y)
       return true
 
 
   kill_checker: (x, y) =>
-    console.log 'kill'
     @find_checker_at(x, y).remove()
     @update_score()
 
@@ -151,7 +154,7 @@ class CheckerGame
 
 
   rotate_board: =>
-    $('.board').toggleClass 'player2'
+    #$('.board').toggleClass 'player2'
 
 
   show_turn_info: =>
