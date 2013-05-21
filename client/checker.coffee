@@ -1,7 +1,7 @@
 # Nikolai Warner - initially dreamed and created in four hours on April 28, 2013
 
 
-class CheckerGame
+class ChecoreGame
   constructor: (options={}) ->
     @width = options.width || 8
     @squares = []
@@ -11,12 +11,12 @@ class CheckerGame
     @player2 = {}
 
     @draw_board()
-    @load_checkers()
-    @setup_checker_events()
+    @load_checores()
+    @setup_checore_events()
     @update_score()
     @show_turn_info()
 
-    setTimeout (-> $('.checker').removeClass('flip')), 5000
+    setTimeout (-> $('.checore').removeClass('flip')), 5000
 
 
   draw_board: =>
@@ -31,7 +31,7 @@ class CheckerGame
         $board.append $square
 
 
-  load_checkers: =>
+  load_checores: =>
     every_other = true
     for y in [1..@width]
       every_other = !every_other
@@ -45,21 +45,21 @@ class CheckerGame
             player = 2
 
           if player
-            $checker = $('<div>')
-            $checker.addClass 'checker flip'
-            $checker.data 'player', player
+            $checore = $('<div>')
+            $checore.addClass 'checore flip'
+            $checore.data 'player', player
 
             $front = $("<div class='front'></div><div class='back'><div class='number'>#{player}</div></div>")
-            $checker.append $front
+            $checore.append $front
 
-            $('.board').append $checker
-            @place_checker $checker, x, y
+            $('.board').append $checore
+            @place_checore $checore, x, y
         else
           every_other = true
 
 
-  setup_checker_events: =>
-    $('.checker').draggable
+  setup_checore_events: =>
+    $('.checore').draggable
       containment: '.board'
       cursor: 'pointer'
     $('.square').droppable
@@ -67,19 +67,19 @@ class CheckerGame
 
 
   make_a_move: (event, ui) =>
-    $checker = ui.draggable
+    $checore = ui.draggable
     $new_square = $(event.target)
 
-    if @can_move $checker, $new_square
-      @place_checker($checker, $new_square.data('x'), $new_square.data('y'))
+    if @can_move $checore, $new_square
+      @place_checore($checore, $new_square.data('x'), $new_square.data('y'))
       @next_turn()
     else
-      @place_checker($checker, $checker.data('x'), $checker.data('y'))
+      @place_checore($checore, $checore.data('x'), $checore.data('y'))
 
 
-  can_move: ($checker, $new_square) =>
-    x = $checker.data('x')
-    y = $checker.data('y')
+  can_move: ($checore, $new_square) =>
+    x = $checore.data('x')
+    y = $checore.data('y')
     new_x = $new_square.data('x')
     new_y = $new_square.data('y')
     @is_square_free(new_x, new_y) &&
@@ -87,7 +87,7 @@ class CheckerGame
 
 
   is_square_free: (x, y) =>
-    !(@find_checker_at(x, y))
+    !(@find_checore_at(x, y))
 
 
   is_diagonal_move: (x, y, new_x, new_y) =>
@@ -110,39 +110,39 @@ class CheckerGame
       jump_y = y + 1
 
     if !@is_square_free(jump_x, jump_y)
-      @kill_checker(jump_x, jump_y)
+      @kill_checore(jump_x, jump_y)
       return true
 
 
-  kill_checker: (x, y) =>
-    @find_checker_at(x, y).remove()
+  kill_checore: (x, y) =>
+    @find_checore_at(x, y).remove()
     @update_score()
 
 
-  find_checker_at: (x, y) =>
-    $checker = false
-    $('.checker').each (index, checker) =>
-      if $(checker).data('y') == y && $(checker).data('x') == x
-        $checker = $(checker)
-    $checker
+  find_checore_at: (x, y) =>
+    $checore = false
+    $('.checore').each (index, checore) =>
+      if $(checore).data('y') == y && $(checore).data('x') == x
+        $checore = $(checore)
+    $checore
 
 
   update_score: =>
     @player1.score = 0
     @player2.score = 0
-    $('.checker').each (index, checker) =>
-      if $(checker).data('player') == 1
+    $('.checore').each (index, checore) =>
+      if $(checore).data('player') == 1
         @player1.score = @player1.score + 1
-      if $(checker).data('player') == 2
+      if $(checore).data('player') == 2
         @player2.score = @player2.score + 1
 
 
-  place_checker: ($checker, x, y) =>
-    $checker.css
+  place_checore: ($checore, x, y) =>
+    $checore.css
       top: (y - 1) * 50 + 10
       left: (x - 1) * 50 + 10
-    $checker.data('x', x)
-    $checker.data('y', y)
+    $checore.data('x', x)
+    $checore.data('y', y)
 
 
   next_turn: =>
@@ -166,4 +166,4 @@ class CheckerGame
 
 Meteor.startup ->
   $ ->
-    window.checkerGame = new CheckerGame()
+    window.checoreGame = new ChecoreGame()
