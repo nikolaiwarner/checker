@@ -1,7 +1,6 @@
 # Nikolai Warner - initially dreamed and created in four hours on April 28, 2013
 
-
-class ChecoreGame
+class @ChecoreGame
   constructor: (options={}) ->
     @width = options.width || 8
     @squares = []
@@ -10,11 +9,15 @@ class ChecoreGame
     @player1 = {}
     @player2 = {}
 
+    @game_id = Math.random().toString(36).substring(7)
+
     @draw_board()
     @load_checores()
     @setup_checore_events()
     @update_score()
     @show_turn_info()
+
+    @save_game()
 
     setTimeout (-> $('.checore').removeClass('flip')), 5000
 
@@ -164,6 +167,22 @@ class ChecoreGame
     $scoreboard.fadeIn(3000)
 
 
-Meteor.startup ->
-  $ ->
-    window.checoreGame = new ChecoreGame()
+  game_state: =>
+    peices = []
+    $('.checore').each (index, checore) =>
+      data = $(checore).data()
+      peices.push
+        player: data.player
+        x: data.x
+        y: data.y
+
+    game =
+      id: @game_id
+      peices: peices
+
+
+
+  save_game: =>
+    console.log game = @game_state()
+    window.Games.insert game
+

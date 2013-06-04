@@ -5,6 +5,7 @@
 <body>
   <div class="container">
     {{> title_screen}}
+
     {{> board}}
   </div>
 </body>
@@ -22,5 +23,10 @@
       checore
       <small><a href="http://nikolaiwarner.com">by nikolai warner<a/></small>
     </h1>
+    {{> new_game}}
   </div>
+</template>
+
+<template name="new_game">
+  <div class="btn new_game">Start A New Game</div>
 </template>
