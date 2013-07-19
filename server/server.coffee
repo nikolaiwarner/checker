@@ -1,5 +1,7 @@
 Games = new Meteor.Collection("games")
 
+#Games.remove {}
+
 Meteor.publish "games", ->
   Games.find {}
 

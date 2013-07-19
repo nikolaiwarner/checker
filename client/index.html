@@ -7,6 +7,8 @@
     {{> title_screen}}
 
     {{> board}}
+
+    {{> all_games}}
   </div>
 </body>
 
@@ -15,6 +17,7 @@
   </div>
   <div class="scoreboard clearfix">
   </div>
+  <div class="btn end_game">End Game</div>
 </template>
 
 <template name="title_screen">
@@ -29,4 +32,36 @@
 
 <template name="new_game">
   <div class="btn new_game">Start A New Game</div>
+</template>
+
+<template name="all_games">
+  <table class='table all_games'>
+    <tr>
+      <th>Game ID</th>
+      <th>Score</th>
+      <th>Duration</th>
+      <th>Start</th>
+      <th>End</th>
+
+    </tr>
+    {{#each games}}
+      <tr>
+        <td>
+          <a href="/games/{{id}}">{{id}}</a>
+        </td>
+        <td>
+          {{score}}
+        </td>
+        <td>
+          {{game_length_in_time}}
+        </td>
+        <td>
+          {{created_time}}
+        </td>
+        <td>
+          {{ended_time}}
+        </td>
+      </tr>
+    {{/each}}
+  </table>
 </template>

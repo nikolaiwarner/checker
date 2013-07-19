@@ -9,20 +9,27 @@ class @ChecoreGame
     @player1 = {}
     @player2 = {}
 
-    @game_id = Math.random().toString(36).substring(7)
-
     @draw_board()
-    @load_checores()
-    @setup_checore_events()
+
+    if options.game
+      Session.set('current_game', options.game)
+      @redraw_board()
+    else
+      @load_checores()
+      @new_game()
+
+    if @game_still_active()
+      $('.end_game').show()
+      @setup_checore_events()
+    else
+      $('.end_game').hide()
     @update_score()
     @show_turn_info()
-
-    @save_game()
-
     setTimeout (-> $('.checore').removeClass('flip')), 5000
 
 
   draw_board: =>
+    $('.square').remove()
     $board = $('.board')
     for y in [1..@width]
       for x in [1..@width]
@@ -35,6 +42,7 @@ class @ChecoreGame
 
 
   load_checores: =>
+    $('.checore').remove()
     every_other = true
     for y in [1..@width]
       every_other = !every_other
@@ -48,17 +56,23 @@ class @ChecoreGame
             player = 2
 
           if player
-            $checore = $('<div>')
-            $checore.addClass 'checore flip'
-            $checore.data 'player', player
-
-            $front = $("<div class='front'></div><div class='back'><div class='number'>#{player}</div></div>")
-            $checore.append $front
-
-            $('.board').append $checore
-            @place_checore $checore, x, y
+            @create_checore(player, x, y, true)
         else
           every_other = true
+
+
+  create_checore: (player, x, y, visible=false) =>
+    $checore = $('<div>')
+    $checore.addClass 'checore'
+    if visible
+      $checore.addClass 'flip'
+    $checore.data 'player', player
+
+    $front = $("<div class='front'></div><div class='back'><div class='number'>#{player}</div></div>")
+    $checore.append $front
+
+    $('.board').append $checore
+    @place_checore $checore, x, y
 
 
   setup_checore_events: =>
@@ -75,6 +89,7 @@ class @ChecoreGame
 
     if @can_move $checore, $new_square
       @place_checore($checore, $new_square.data('x'), $new_square.data('y'))
+      @save_game()
       @next_turn()
     else
       @place_checore($checore, $checore.data('x'), $checore.data('y'))
@@ -148,6 +163,13 @@ class @ChecoreGame
     $checore.data('y', y)
 
 
+  redraw_board: =>
+    $('.checore').remove()
+    game = Session.get('current_game')
+    for peice in game.peices
+      @create_checore(peice.player, peice.x, peice.y)
+
+
   next_turn: =>
     if @turn == 1
       @turn = 2
@@ -167,22 +189,47 @@ class @ChecoreGame
     $scoreboard.fadeIn(3000)
 
 
-  game_state: =>
+  count_peices: =>
     peices = []
-    $('.checore').each (index, checore) =>
+    $('.checore').each (index, checore) ->
       data = $(checore).data()
       peices.push
         player: data.player
         x: data.x
         y: data.y
+    return peices
 
+
+  new_game: =>
     game =
-      id: @game_id
-      peices: peices
+      created_at: Date.now()
+      ended_at: undefined
+      id: Math.random().toString(36).substring(7)
+      peices: @count_peices()
 
+    Session.set('current_game', game)
+
+    @save_game()
+    Meteor.Router.to("/games/#{Session.get('current_game').id}")
+
+    return game
 
 
   save_game: =>
-    console.log game = @game_state()
-    window.Games.insert game
+    game = Session.get('current_game')
+    game.peices = @count_peices()
+    if window.Games.findOne {id: game.id}
+      window.Games.update {_id: game._id}, game
+    else
+      window.Games.insert game
+
+
+  end_game: =>
+    game = Session.get('current_game')
+    game.ended_at = Date.now()
+    Session.set('current_game', game)
+    @save_game()
+
+  game_still_active: =>
+    !Session.get('current_game').ended_at?
 
